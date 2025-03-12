@@ -1,24 +1,31 @@
 from django.shortcuts import render
+from django.contrib.auth.models import User
+from rest_framework import generics, viewsets
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from .models import Merchant, DeliveryPatern, Order
+from .serializers import UserSerializer, MerchantSerializer, DeliveryPaternSerializer, OrderSerializer
 
-# Create your views here. - handles get,post,put,delete requests automatically
-from rest_framework import viewsets
-from rest_framework import permissions
-from .models import Merchant, DeliveryPatern, order
-from .serializers import MerchantSerializer, DeliveryPaternSerializer, OrderSerializer
+# Register User API View
+class CreateUserView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
 
-
-
+# Merchant API View
 class MerchantViewSet(viewsets.ModelViewSet):
-    queryset = Merchant.objects.all()    # Fetches all merchants from the database.
-    serializer_class = MerchantSerializer  # Converts the merchant data to JSON format.
-    permission_classes = [permissions.IsAuthenticated]  # Ensures that only authenticated users can access the API.
+    queryset = Merchant.objects.all()
+    serializer_class = MerchantSerializer
+    permission_classes = [IsAuthenticated]  # Auth required
 
+# DeliveryPatern API View
 class DeliveryPaternViewSet(viewsets.ModelViewSet):
     queryset = DeliveryPatern.objects.all()
     serializer_class = DeliveryPaternSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Requires login
 
+# Order API View
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = order.objects.all()
+    queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Auth required

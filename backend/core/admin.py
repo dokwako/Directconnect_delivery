@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Merchant, DeliveryPatern, order
+from .models import Merchant, DeliveryPatern, Order
 
 admin.site.register(Merchant)
 admin.site.register(DeliveryPatern)
-admin.site.register(order)
+admin.site.register(Order)

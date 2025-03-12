@@ -1,22 +1,31 @@
-# a router generates urls automaticaly for the viewsets
-
-from django.urls import path,include
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import MerchantViewSet, DeliveryPaternViewSet, OrderViewSet
+from django.contrib import admin
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from core.views import CreateUserView, MerchantViewSet, DeliveryPaternViewSet, OrderViewSet
 from django.http import JsonResponse
 
-
-# Create a router and register our viewset with it.
-
+# Router for ViewSets (Auto-generates URLs)
 router = DefaultRouter()
-router.register(r'merchants', MerchantViewSet)  # merchants api
-router.register(r'deliverypaterns', DeliveryPaternViewSet) # deliverypaterns api
-router.register(r'orders', OrderViewSet) # orders api
+router.register(r'merchants', MerchantViewSet)
+router.register(r'deliverypaterns', DeliveryPaternViewSet)
+router.register(r'orders', OrderViewSet)
 
+def api_root(request):
+    return JsonResponse({"message": "Welcome to the DirectConnect API. Use /api/ for endpoints."})
 
-def home_view(request):
-    return JsonResponse({'message':'Welcome to direct conect delivery API'})
+# URL Patterns
 urlpatterns = [
-    path('',home_view, name = 'home'), # root url
+    path("", api_root),  # Redirect root to API message
+    path('admin/', admin.site.urls),
+
+    # Authentication
+    path('api/user/register/', CreateUserView.as_view(), name='register'),  
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # API endpoints
     path('api/', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls')),  # DRF built-in login/logout
+
 ]
